@@ -9,26 +9,16 @@
 
 //Definição de pinos, variáveis e número de LED
 #define NUM_LEDS 25
-#define MATRIZ_PIN 11 //Tive que mudar porque o teclado já ocupava o pino 7
+#define MATRIZ_PIN 7
 #define NUM_COLUNAS 5
 const uint8_t colunas[4] = {1, 2, 3, 4}; // Pinos das colunas
 const uint8_t linhas[4] = {5, 6, 7, 8};  // Pinos das linhas
-
-// Mapeamento das teclas do teclado
-    const char teclado[4][4] = 
-    {
-    {'1', '2', '3', 'A'}, 
-    {'4', '5', '6', 'B'}, 
-    {'7', '8', '9', 'C'},
-    {'*', '0', '#', 'D'}
-    };
 
 //Funções Utilizadas
 static void gpio_irq_handler(uint gpio, uint32_t events);
 uint32_t matrix_rgb(double b, double r, double g);
 void formar_frames(double frame[NUM_LEDS][3], PIO pio, uint sm);
 void gerar_animacao(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms);
-char leitura_teclado(void);
 void configurar_pino(int pino, bool direcao, bool estado);
 
 //Rotina da interrupção
@@ -158,49 +148,6 @@ void buttonConfig(const uint BUTTON_PIN)
     gpio_pull_up(BUTTON_PIN);             //habilito o pull up interno 
 }
 
-//Função pra ler o teclado
-char leitura_teclado()
-{
-    char numero = 'n'; // Valor padrão para quando nenhuma tecla for pressionada
-
-    // Desliga todos os pinos das colunas
-    for (int i = 0; i < 4; i++)
-    {
-        gpio_put(colunas[i], 1);
-    }
-
-    for (int coluna = 0; coluna < 4; coluna++)
-    {
-        // Ativa a coluna atual (coloca o pino da coluna como 1)
-        gpio_put(colunas[coluna], 0);
-
-        for (int linha = 0; linha < 4; linha++)
-        {
-            // Verifica o estado da linha. Se estiver em 0, a tecla foi pressionada
-            if (gpio_get(linhas[linha]) == 0)
-            {
-                numero = teclado[linha][coluna]; // Mapeia a tecla pressionada
-                // Aguarda a tecla ser liberada (debounce)
-                while (gpio_get(linhas[linha]) == 0)
-                {
-                    sleep_ms(10); // Aguarda a tecla ser liberada
-                }
-                break; // Sai do laço após detectar a tecla
-            }
-        }
-
-        // Desativa a coluna atual (coloca o pino da coluna como 0)
-        gpio_put(colunas[coluna], 1);
-
-        if (numero != 'n') // Se uma tecla foi pressionada, sai do laço de colunas
-        {
-            break;
-        }
-    }
- //printf("Chegou no fim da leitura do teclado\n");
- return numero; // Retorna a tecla pressionada
-}
-
 // Função inicial para configurar os pinos
 void configurar_pino(int pino, bool direcao, bool estado) {
     gpio_init(pino);
@@ -216,6 +163,38 @@ npLED_t leds[NUM_LEDS];
 // Variáveis para uso da máquina PIO.
 PIO np_pio;
 uint sm;
+
+// Funções de teclas específicas
+void desligarTodosOsLeds() {
+   npClear();
+    npWrite();
+
+}
+void ligarLEDsAzuis() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        definir_intensidade(correcao_index(i), 0.0, 0.0, 1.0);
+    }
+    npWrite();
+}
+void ligarLEDsVermelhos() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        definir_intensidade(correcao_index(i), 0.8, 0.0, 0.0);
+    }
+    npWrite();
+}
+void ligarLEDsVerdes() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        definir_intensidade(correcao_index(i), 0.0, 0.5, 0.0);
+    }
+    npWrite();
+}
+
+void ligarLEDsBrancos() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        definir_intensidade(correcao_index(i), 0.2, 0.2, 0.2);
+    }
+    npWrite();
+}
 
 //Animações
 //A 1ª dimensao é os frames, a 2ª o índice do LED, a 3ª a cor (RGB)
@@ -260,8 +239,8 @@ uint sm;
  double animacao_Lorenzo[3][NUM_LEDS][3]={
      { // Quadro 1
             {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.9, 0.9}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
             {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}
         },
@@ -282,47 +261,23 @@ uint sm;
  };
 
 
-
-
 //Função principal
 int main() {
      char tecla;
      stdio_init_all();
      npInit(MATRIZ_PIN);
-
-     // Configuração dos pinos das colunas como saídas digitais
-    for (int i = 0; i < 4; i++)
-    {//Os pinos de 1 a 4 sao outputs
-        gpio_init(colunas[i]);
-        gpio_set_dir(colunas[i], GPIO_OUT);
-        gpio_put(colunas[i], 1); // Inicializa todas as colunas como baixo
-    }
-
-    // Configuração dos pinos das linhas como entradas digitais
-    for (int i = 0; i < 4; i++)
-    {//Os pinos de 5 a 8 sao inputs
-        gpio_init(linhas[i]);
-        gpio_set_dir(linhas[i], GPIO_IN);
-        gpio_pull_up(linhas[i]); // Habilita pull-up para as linhas
-    }
-
-
     
     while (true) {
-        tecla = leitura_teclado();
-
-        // Lê a tecla pressionada
-        if (tecla == '*') {
-        printf("Reiniciando para modo de gravação...\n");
-        reset_usb_boot(0, 0);
-        }else if (tecla != 'n'){
-            printf("Tecla pressionada: %c\n", tecla);
-                // Executa ações baseadas na tecla 
+     //gerar_animacao(animacao_Lorenzo,3,1000);
+     //npSetLED(24,0,204,204);
+     //npWrite();
+     printf("Digite um numero: \n");
+     scanf(" %c",&tecla);
                 switch (tecla) {
-                case '1': //printf("Yay, caso 1\n");
+                case '1': printf("Yay, caso 1\n");
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '2': 
+                case '2': printf("Interessante, caso 2\n");
                     gerar_animacao(animacao_Lorenzo, 3, 1000); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case '3': 
@@ -340,20 +295,29 @@ int main() {
                 case '7':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '8':
+                case 8:
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '9':
+                case 9:
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '0':
+                case 0:
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case 'A':
+                case 10:
+                    desligarTodosOsLeds();
+                    break;
                 case 'B':
+                    ligarLEDsAzuis();
+                    break;
                 case 'C':
+                    ligarLEDsVermelhos();
+                    break;
                 case 'D':
+                    ligarLEDsVerdes();
+                    break;
                 case '#': 
+                    ligarLEDsBrancos();
                 default: break;
                 }
              npClear();
@@ -361,6 +325,5 @@ int main() {
             sleep_ms(200); // Intervalo de tempo menor para uma leitura mais rápida
             }
      sleep_ms(150);
-    }
  return 0;//Teoricamente, nunca chega aqui por causa do loop infinito
 }
