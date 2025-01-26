@@ -275,6 +275,7 @@ void ligarLEDsBrancos() {
         }
  };
 
+// Animação CEPEDI
  double animacao_vini[29][NUM_LEDS][3] = {
     {
         {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
