@@ -83,8 +83,8 @@ void definir_intensidade(const uint index, const double r, const double g, const
  leds[index].G =(uint8_t) round(g*255.0);
  leds[index].B =(uint8_t) round(b*255.0);
  //if(index==0 || index==5)
-   if(r==0.5)
-    printf("b = %.2lf\n(index %d) leds[index].B = %d\n",b,index,leds[index].B);
+ //  if(r==0.5)
+ //   printf("b = %.2lf\n(index %d) leds[index].B = %d\n",b,index,leds[index].B);
 }
 
 /**
@@ -139,6 +139,8 @@ void gerar_animacao(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms
      putchar('\n');
      sleep_ms(delay_ms);
     }
+ npClear();
+ npWrite();
 }
 
 void buttonConfig(const uint BUTTON_PIN)
@@ -173,26 +175,26 @@ void desligarTodosOsLeds() {
 }
 void ligarLEDsAzuis() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(correcao_index(i), 0.0, 0.0, 1.0);
+        definir_intensidade(i, 0.0, 0.0, 1.0);
     }
     npWrite();
 }
 void ligarLEDsVermelhos() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(correcao_index(i), 0.8, 0.0, 0.0);
+        definir_intensidade(i, 0.8, 0.0, 0.0);
     }
     npWrite();
 }
 void ligarLEDsVerdes() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(correcao_index(i), 0.0, 0.5, 0.0);
+        definir_intensidade(i, 0.0, 0.5, 0.0);
     }
     npWrite();
 }
 
 void ligarLEDsBrancos() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(correcao_index(i), 0.2, 0.2, 0.2);
+        definir_intensidade(i, 0.2, 0.2, 0.2);
     }
     npWrite();
 }
@@ -521,13 +523,13 @@ int main() {
      //gerar_animacao(animacao_Lorenzo,3,1000);
      //npSetLED(24,0,204,204);
      //npWrite();
-     printf("Digite um numero: \n");
+     //printf("Digite um numero: \n");
      scanf(" %c",&tecla);
                 switch (tecla) {
-                case '1': printf("Yay, caso 1\n");
+                case '1': //printf("Yay, caso 1\n");
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '2': printf("Interessante, caso 2\n");
+                case '2': //printf("Interessante, caso 2\n");
                     gerar_animacao(animacao_Lorenzo, 5, 1000); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case '3': 
@@ -545,19 +547,19 @@ int main() {
                 case '7':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case 8:
+                case '8':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case 9:
+                case '9':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case 0:
+                case '0':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case 'r':
                     reset_usb_boot(0,0); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case 10:
+                case 'A':
                     desligarTodosOsLeds();
                     break;
                 case 'B':
@@ -573,10 +575,7 @@ int main() {
                     ligarLEDsBrancos();
                 default: break;
                 }
-             npClear();
-             npWrite();
-            sleep_ms(200); // Intervalo de tempo menor para uma leitura mais rápida
+             sleep_ms(150);
             }
-     sleep_ms(150);
  return 0;//Teoricamente, nunca chega aqui por causa do loop infinito
 }
