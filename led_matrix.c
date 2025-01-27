@@ -226,20 +226,20 @@ void ligarLEDsAzuis() {
 }
 void ligarLEDsVermelhos() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(i, 0.8, 0.0, 0.0);
+        definir_intensidade(i, 0.2, 0.0, 0.0);
     }
     npWrite();
 }
 void ligarLEDsVerdes() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(i, 0.0, 0.1, 0.0);
+        definir_intensidade(i, 0.0, 0.4, 0.0);
     }
     npWrite();
 }
 
 void ligarLEDsBrancos() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(i, 0.5, 0.5, 0.5);
+        definir_intensidade(i, 0.8, 0.8, 0.8);
     }
     npWrite();
 }
