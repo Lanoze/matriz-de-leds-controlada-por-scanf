@@ -14,6 +14,32 @@
 const uint8_t colunas[4] = {1, 2, 3, 4}; // Pinos das colunas
 const uint8_t linhas[4] = {5, 6, 7, 8};  // Pinos das linhas
 
+// Frequências das notas musicais em Hertz
+#define DO 132 // Define a frequência da nota Dó
+#define RE 148.5 // Define a frequência da nota Ré
+#define MI 165 // Define a frequência da nota Mi
+#define FA 175.956 // Define a frequência da nota Fá
+#define SOL 198 // Define a frequência da nota Sol
+#define LA 220.044 // Define a frequência da nota Lá
+#define SI 247.500 // Define a frequência da nota Si
+
+// Pino do buzzer
+#define BUZZER 21 // Define o pino GPIO 21 como o pino conectado ao buzzer
+
+// Função para tocar uma frequência por uma duração específica
+void nota(uint32_t frequencia, uint32_t tempo_ms) {
+    uint32_t delay = 1000000 / (frequencia * 2);  // Calcula o tempo de atraso em microssegundos para gerar a onda quadrada
+    uint32_t ciclo = frequencia * tempo_ms / 1000;  // Calcula o número de ciclos necessários para a duração desejada
+
+    // Loop para gerar a onda quadrada no buzzer
+    for (uint32_t i = 0; i < ciclo; i++) {
+        gpio_put(BUZZER, 1); // Liga o buzzer
+        sleep_us(delay); // Espera pelo tempo de atraso calculado
+        gpio_put(BUZZER, 0); // Desliga o buzzer
+        sleep_us(delay); // Espera novamente pelo tempo de atraso para completar o ciclo
+    }
+}
+
 //Funções Utilizadas
 static void gpio_irq_handler(uint gpio, uint32_t events);
 uint32_t matrix_rgb(double b, double r, double g);
@@ -142,6 +168,25 @@ void gerar_animacao(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms
  npClear();
  npWrite();
 }
+//Só funciona na animação Vinicobra, se quisesse criar uma mais geral seria um pouco mais difícil
+void gerar_animacao_com_som(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms){
+ for(int i=0;i<num_frames;i++){
+     gerar_frame(animacao[i]);
+     if(i==2 || i==8 || i==12){
+      nota(1000,80);
+      //printf("Tocou a nota em i=%d\n",i);
+      sleep_ms(delay_ms-80);
+     }else if(i!=19)
+     sleep_ms(delay_ms);
+     else{
+      nota(3000,80);
+      //printf("Tocou a nota em i=19\n");
+      sleep_ms(delay_ms-80);
+     }
+    }
+ npClear();
+ npWrite();
+}
 
 void buttonConfig(const uint BUTTON_PIN)
 {
@@ -187,14 +232,14 @@ void ligarLEDsVermelhos() {
 }
 void ligarLEDsVerdes() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(i, 0.0, 0.5, 0.0);
+        definir_intensidade(i, 0.0, 0.1, 0.0);
     }
     npWrite();
 }
 
 void ligarLEDsBrancos() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        definir_intensidade(i, 0.2, 0.2, 0.2);
+        definir_intensidade(i, 0.5, 0.5, 0.5);
     }
     npWrite();
 }
@@ -740,6 +785,9 @@ int main() {
      char tecla;
      stdio_init_all();
      npInit(MATRIZ_PIN);
+
+     gpio_init(BUZZER); // Inicializa o pino do buzzer
+     gpio_set_dir(BUZZER, GPIO_OUT);
     
     while (true) {
      //gerar_animacao(animacao_Lorenzo,3,1000);
@@ -758,10 +806,10 @@ int main() {
                     gerar_animacao(animacao_vini, 29, 250); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case '4':
-                    gerar_animacao(animacao_vinicobra, 26, 700); //Nome da aniimação, n de frames, fps , pio, sn
+                    gerar_animacao_com_som(animacao_vinicobra, 26, 400); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case '5':
-                    gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
+                    nota(1000,700); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
                 case '6':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn

@@ -49,7 +49,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(led_matrix led_matrix.c )
+add_executable(led_matrix led_matrix.c)#Necessário pra criar novas bibliotecas
 
 pico_set_program_name(led_matrix "led_matrix")
 pico_set_program_version(led_matrix "0.1")
