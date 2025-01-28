@@ -168,6 +168,15 @@ void gerar_animacao(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms
  npClear();
  npWrite();
 }
+
+uint32_t musica_tetris[]={
+659,494,523,587,494,523,440,440,
+494,587,659,523,587,494,523,440,
+523,494,440,440,494,659,587,523,
+494,494,523,587,659,523,587,494,
+659,494,523,587,494,523,440,440,
+494,587,659,523,587,494,523,440};
+
 //Só funciona na animação Vinicobra, se quisesse criar uma mais geral seria um pouco mais difícil
 void gerar_animacao_com_som(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms){
  for(int i=0;i<num_frames;i++){
@@ -189,11 +198,12 @@ void gerar_animacao_com_som(double animacao[][NUM_LEDS][3], int num_frames, int 
 }
 
 
-void gerar_animacao_com_som_tetris(double animacao[][NUM_LEDS][3], int num_frames, int delay_ms){
+void gerar_animacao_com_som_tetris(double animacao[][NUM_LEDS][3], int num_frames){
 
  for(int i=0;i<num_frames;i++){
      gerar_frame(animacao[i]);
-     sleep_ms(delay_ms);
+     nota(musica_tetris[i],200);
+     sleep_ms(200);//Tempo que passa na imagem sem música
     }
     
  npClear();
@@ -1145,10 +1155,8 @@ double animacao_vinitetris[48][NUM_LEDS][3] = {
         {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
         {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
         {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0},
-    },
+    }//Tinha uma vírgula desnecessária aqui
 };
-
-
    
 
 //Função principal
@@ -1182,8 +1190,8 @@ int main() {
                 case '5':
                     nota(1000,700); //Nome da aniimação, n de frames, fps , pio, sn
                     break;
-                case '6':
-                    gerar_animacao_com_som_tetris(animacao_vinitetris, 48, 500); //Nome da aniimação, n de frames, fps , pio, sn
+                case '6'://48 frames
+                    gerar_animacao_com_som_tetris(animacao_vinitetris, 48);
                     break;
                 case '7':
                     gerar_animacao(animacao_Bia, 5, 500); //Nome da aniimação, n de frames, fps , pio, sn
